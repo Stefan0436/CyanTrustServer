@@ -40,6 +40,7 @@ import org.asf.cyan.webserver.commands.trust.Download;
 import org.asf.cyan.webserver.commands.trust.ListGroups;
 import org.asf.cyan.webserver.commands.trust.ListModids;
 import org.asf.cyan.webserver.commands.trust.RegisterModid;
+import org.asf.cyan.webserver.commands.trust.SetLocation;
 import org.asf.cyan.webserver.commands.trust.UnregisterModid;
 import org.asf.cyan.webserver.commands.trust.Upload;
 
@@ -87,6 +88,7 @@ public class CyanTrustServerVirtualFileProvider implements IVirtualFileProvider,
 		trustCommands.add(new ListGroups());
 		trustCommands.add(new UnregisterModid());
 		trustCommands.add(new DeleteGroup());
+		trustCommands.add(new SetLocation());
 	}
 
 	private WebCommand runCommand(WebCommand command, Supplier<String[]> argumentKeyProvider,

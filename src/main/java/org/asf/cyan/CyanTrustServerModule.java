@@ -30,15 +30,15 @@ public class CyanTrustServerModule extends CyanTrustServerModificationManager {
 		configuration.put("mod-development-group", "moddev");
 		configuration.put("mod-security-path", "/cyan/security");
 		configuration.put("mod-trust-repository-path", "/cyan/trust");
-		
+
 		configuration.put("max-mod-groups-per-user", "5");
 		configuration.put("max-mods-per-group", "10");
 	}
-	
+
 	public static int getMaxModGroups() {
 		return Integer.valueOf(configuration.get("max-mod-groups-per-user"));
 	}
-	
+
 	public static int getMaxMods() {
 		return Integer.valueOf(configuration.get("max-mods-per-group"));
 	}
@@ -141,10 +141,8 @@ public class CyanTrustServerModule extends CyanTrustServerModificationManager {
 		LoginService service = new LoginService();
 		ServiceManager.registerService(service);
 
-		if (!CyanTrustServerModule.getModInfoDir().exists()) {
+		if (!CyanTrustServerModule.getModInfoDir().exists())
 			CyanTrustServerModule.getModInfoDir().mkdirs();
-			ServiceManager.addToConfiguration(service);
-		}
 
 		if (hasConfigChanged) {
 			try {

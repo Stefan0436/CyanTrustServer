@@ -106,7 +106,7 @@ public class SessionManager {
 			try {
 				AuthResult user = Memory.getInstance().get("usermanager.auth.frontend").getValue(IAuthFrontend.class)
 						.authenticate(CyanTrustServerModule.getDevGroup(), request, response);
-				
+				response.body = null;
 				if (!user.success())
 					return null;
 				

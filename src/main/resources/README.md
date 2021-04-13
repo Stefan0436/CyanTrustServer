@@ -56,6 +56,34 @@ ${otherclasses.rats}
 
 $moduleConfigAdditionsStandalone
 
+## Post-installation module dependencies
+This project HEAVILY depends on the usermanager module in order to run, you can download the latest version directly from our maven repository: [Download UserManager Version 1.0.0.A7](https://aerialworks.ddns.net/maven/org/asf/connective/usermanager/UserManager/1.0.0.A7) (select the normal jarfile)
+
+### Enabling the login service
+This module uses the UserManager Authentication Aervice API to authenticate some requests. In order for this to fully function, our service needs to be registered. Due to a bug, registering the service at first boot is not possible, you will need to add it to the modules block after first boot:
+
+```
+# File: server/rats.ccfg
+# ...
+
+modules> {
+    # ...
+    UserManager-AuthServices> {
+        # ...
+        
+        # Add the following:
+        cyan.trust.service.login> 'cyan.trust.service.login'
+        
+        # ...
+    }
+    # ...
+}
+
+# ...
+```
+
+Reload the server and the service should be available.
+
 <br />
 
 # Version Notice:
