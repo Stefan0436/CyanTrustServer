@@ -1,0 +1,3 @@
+*.reg -crlf
+*.sh -clrf
+*.bash -clrf

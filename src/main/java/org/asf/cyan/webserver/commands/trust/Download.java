@@ -50,7 +50,8 @@ public class Download extends WebCommand {
 		}
 
 		File trustDir = new File(CyanTrustServerModule.getModInfoDir(), group + "/" + modid + "/trust");
-		if (!group.isEmpty() && !modid.isEmpty() && trustDir.exists()) {
+		if (!group.isEmpty() && !modid.isEmpty()
+				&& (trustDir.exists() || file.equalsIgnoreCase("mod.artifacts.deps"))) {
 			ModInfo mod = CyanTrustServerModule.getModInfo(group, modid);
 			if (mod == null) {
 				getResponse().status = 404;
@@ -59,36 +60,47 @@ public class Download extends WebCommand {
 				return;
 			}
 
-			if (file.endsWith(".sha256")) {
-				String name = file.substring(0, file.lastIndexOf("."));
-				String version = "";
-
-				if (name.contains("."))
-					name = name.substring(0, name.lastIndexOf("."));
-
-				if (name.contains("-")) {
-					version = name.substring(name.indexOf("-") + 1);
-					name = name.substring(0, name.indexOf("-"));
+			if (file.equalsIgnoreCase("mod.artifacts.deps")) {
+				if (mod.artifacts.size() != 0 || mod.repositories.size() != 0) {
+					getResponse().setContent("text/ccfg", mod.toDepsFile());
+				} else {
+					getResponse().status = 404;
+					getResponse().message = "File not found";
+					getResponse().setContent("text/plain", "Could not locate requested file.\n");
+					return;
 				}
+			} else {
+				if (file.endsWith(".sha256")) {
+					String name = file.substring(0, file.lastIndexOf("."));
+					String version = "";
 
-				String shafile = mod.trustContainers.get(name).hashes.get(version) + "  "
-						+ file.substring(0, file.lastIndexOf("."));
-				getResponse().setContent("text/plain", shafile + "\n");
-				return;
-			}
-			File trustFile = new File(trustDir, file);
-			if (!trustFile.exists()) {
-				getResponse().status = 404;
-				getResponse().message = "File not found";
-				getResponse().setContent("text/plain", "Could not locate requested file.\n");
-				return;
-			}
-			try {
-				getResponse().setContent("application/octet-stream", new FileInputStream(trustFile));
-			} catch (FileNotFoundException e) {
-				getResponse().status = 503;
-				getResponse().message = "Internal server error";
-				return;
+					if (name.contains("."))
+						name = name.substring(0, name.lastIndexOf("."));
+
+					if (name.contains("-")) {
+						version = name.substring(name.indexOf("-") + 1);
+						name = name.substring(0, name.indexOf("-"));
+					}
+
+					String shafile = mod.trustContainers.get(name).hashes.get(version) + "  "
+							+ file.substring(0, file.lastIndexOf("."));
+					getResponse().setContent("text/plain", shafile + "\n");
+					return;
+				}
+				File trustFile = new File(trustDir, file);
+				if (!trustFile.exists()) {
+					getResponse().status = 404;
+					getResponse().message = "File not found";
+					getResponse().setContent("text/plain", "Could not locate requested file.\n");
+					return;
+				}
+				try {
+					getResponse().setContent("application/octet-stream", new FileInputStream(trustFile));
+				} catch (FileNotFoundException e) {
+					getResponse().status = 503;
+					getResponse().message = "Internal server error";
+					return;
+				}
 			}
 		} else {
 			getResponse().status = 404;

@@ -34,12 +34,14 @@ import org.asf.rats.http.providers.IVirtualFileProvider;
 import org.asf.cyan.webserver.commands.security.RequestModServerLocation;
 import org.asf.cyan.webserver.commands.security.RequestTrustContainerName;
 import org.asf.cyan.webserver.commands.security.RequestTrustContainerVersion;
+import org.asf.cyan.webserver.commands.trust.ClearDeps;
 import org.asf.cyan.webserver.commands.trust.CreateGroup;
 import org.asf.cyan.webserver.commands.trust.DeleteGroup;
 import org.asf.cyan.webserver.commands.trust.Download;
 import org.asf.cyan.webserver.commands.trust.ListGroups;
 import org.asf.cyan.webserver.commands.trust.ListModids;
 import org.asf.cyan.webserver.commands.trust.RegisterModid;
+import org.asf.cyan.webserver.commands.trust.SetDeps;
 import org.asf.cyan.webserver.commands.trust.SetLocation;
 import org.asf.cyan.webserver.commands.trust.UnregisterModid;
 import org.asf.cyan.webserver.commands.trust.Upload;
@@ -89,6 +91,8 @@ public class CyanTrustServerVirtualFileProvider implements IVirtualFileProvider,
 		trustCommands.add(new UnregisterModid());
 		trustCommands.add(new DeleteGroup());
 		trustCommands.add(new SetLocation());
+		trustCommands.add(new SetDeps());
+		trustCommands.add(new ClearDeps());
 	}
 
 	private WebCommand runCommand(WebCommand command, Supplier<String[]> argumentKeyProvider,

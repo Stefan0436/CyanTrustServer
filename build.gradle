@@ -17,7 +17,7 @@ plugins {
 
 
 // Basic information
-version = "1.0.0.A1"
+version = "1.0.0.A2"
 group = "org.asf.cyan"
 
 ext.moduleClass = "CyanTrustServerModule"

@@ -38,6 +38,13 @@ public class ModInfo extends Configuration<ModInfo> {
 			Files.writeString(new File(modDir, "location.ccfg").toPath(), conf.toString());
 		}
 		
+		if (repositories.size() != 0 || artifacts.size() != 0) {
+			DepConfig conf = new DepConfig();
+			conf.repositories.putAll(repositories);
+			conf.artifacts.putAll(artifacts);
+			Files.writeString(new File(modDir, "artifacts.ccfg").toPath(), conf.toString());
+		}
+		
 		ContainerConfig conf = new ContainerConfig();
 		conf.trustContainers.putAll(trustContainers);
 		Files.writeString(new File(modDir, "containers.ccfg").toPath(), conf.toString());
@@ -72,7 +79,31 @@ public class ModInfo extends Configuration<ModInfo> {
 		public HashMap<String, TrustContainer> trustContainers = new HashMap<String, TrustContainer>();
 	}
 
+	private class DepConfig extends Configuration<ContainerConfig> {
+		@Override
+		public String filename() {
+			return null;
+		}
+
+		@Override
+		public String folder() {
+			return null;
+		}
+
+		public HashMap<String, String> repositories = new HashMap<String, String> ();
+		public HashMap<String, HashMap<String, String>> artifacts = new HashMap<String, HashMap<String, String>>();
+	}
+
 	public String trustServer = null;
+	public HashMap<String, String> repositories = new HashMap<String, String> ();
+	public HashMap<String, HashMap<String, String>> artifacts = new HashMap<String, HashMap<String, String>>(); 
 	public HashMap<String, TrustContainer> trustContainers = new HashMap<String, TrustContainer>();
+
+	public String toDepsFile() {
+		DepConfig conf = new DepConfig();
+		conf.repositories.putAll(repositories);
+		conf.artifacts.putAll(artifacts);
+		return conf.toString();
+	}
 
 }
