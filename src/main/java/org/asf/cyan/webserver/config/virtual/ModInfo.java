@@ -10,7 +10,7 @@ import org.asf.cyan.api.config.Configuration;
 public class ModInfo extends Configuration<ModInfo> {
 
 	private File modDir;
-	
+
 	@Override
 	public String filename() {
 		return null;
@@ -37,7 +37,7 @@ public class ModInfo extends Configuration<ModInfo> {
 			conf.trustServer = trustServer;
 			Files.writeString(new File(modDir, "location.ccfg").toPath(), conf.toString());
 		}
-		
+
 		if (repositories.size() != 0 || artifacts.size() != 0) {
 			DepConfig conf = new DepConfig();
 			conf.repositories.putAll(repositories);
@@ -45,10 +45,17 @@ public class ModInfo extends Configuration<ModInfo> {
 			conf.dependencyVersion = dependencyVersion;
 			Files.writeString(new File(modDir, "artifacts.ccfg").toPath(), conf.toString());
 		}
-		
+
 		ContainerConfig conf = new ContainerConfig();
 		conf.trustContainers.putAll(trustContainers);
 		Files.writeString(new File(modDir, "containers.ccfg").toPath(), conf.toString());
+
+		if (channelFiles.size() != 0 || channels.size() != 0) {
+			ModUpdateChannelConfig updateInfo = new ModUpdateChannelConfig();
+			updateInfo.channelFiles.putAll(channelFiles);
+			updateInfo.channels.putAll(channels);
+			Files.writeString(new File(modDir, "updateinfo.ccfg").toPath(), updateInfo.toString());
+		}
 	}
 
 	@SuppressWarnings("unused")
@@ -91,19 +98,21 @@ public class ModInfo extends Configuration<ModInfo> {
 		public String folder() {
 			return null;
 		}
-		
+
 		public String dependencyVersion = null;
 
-		public HashMap<String, String> repositories = new HashMap<String, String> ();
+		public HashMap<String, String> repositories = new HashMap<String, String>();
 		public HashMap<String, HashMap<String, String>> artifacts = new HashMap<String, HashMap<String, String>>();
 	}
 
 	public String trustServer = null;
 	public String dependencyVersion = null;
 
-	public HashMap<String, String> repositories = new HashMap<String, String> ();
-	public HashMap<String, HashMap<String, String>> artifacts = new HashMap<String, HashMap<String, String>>(); 
+	public HashMap<String, String> repositories = new HashMap<String, String>();
+	public HashMap<String, HashMap<String, String>> artifacts = new HashMap<String, HashMap<String, String>>();
 	public HashMap<String, TrustContainer> trustContainers = new HashMap<String, TrustContainer>();
+	public HashMap<String, ModUpdateChannel> channelFiles = new HashMap<String, ModUpdateChannel>();
+	public HashMap<String, String> channels = new HashMap<String, String>();
 
 	public String toDepsFile() {
 		DepConfig conf = new DepConfig();
@@ -111,6 +120,12 @@ public class ModInfo extends Configuration<ModInfo> {
 		conf.artifacts.putAll(artifacts);
 		conf.dependencyVersion = dependencyVersion;
 		return conf.toString();
+	}
+
+	public String toChannelFile() {
+		ModUpdateChannelConfig channels = new ModUpdateChannelConfig();
+		channels.channels = this.channels;
+		return channels.toString();
 	}
 
 }

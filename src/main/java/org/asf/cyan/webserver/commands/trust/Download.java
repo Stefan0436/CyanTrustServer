@@ -29,8 +29,15 @@ public class Download extends WebCommand {
 		String file = "";
 
 		if (str.contains("/")) {
-			file = str.substring(str.lastIndexOf("/") + 1);
-			str = str.substring(0, str.lastIndexOf("/"));
+			if (str.contains("/channels")) {
+				String file2 = str.substring(str.indexOf("/channels"));
+				str = str.substring(0, str.indexOf("/channels"));
+				file += file2;
+			} else {
+
+				file = str.substring(str.lastIndexOf("/") + 1);
+				str = str.substring(0, str.lastIndexOf("/"));
+			}
 		}
 		str = str.replaceAll("/", ".");
 
@@ -52,8 +59,7 @@ public class Download extends WebCommand {
 		}
 
 		File trustDir = new File(CyanTrustServerModule.getModInfoDir(), group + "/" + modid + "/trust");
-		if (!group.isEmpty() && !modid.isEmpty()
-				&& (trustDir.exists() || file.equalsIgnoreCase("mod.artifacts.deps"))) {
+		if (!group.isEmpty() && !modid.isEmpty() && trustDir.exists()) {
 			ModInfo mod = CyanTrustServerModule.getModInfo(group, modid);
 			if (mod == null) {
 				getResponse().status = 404;
@@ -62,19 +68,37 @@ public class Download extends WebCommand {
 				return;
 			}
 
-			if (file.equalsIgnoreCase("mod.artifacts.deps")) {
+			if (file.startsWith("/channels/")) {
+				file = file.substring("/channels/".length());
+				if (file.endsWith(".ccfg"))
+					file = file.substring(0, file.indexOf(".ccfg"));
+				if (mod.channelFiles.containsKey(file)) {
+					getResponse().setContent("text/ccfg", mod.channelFiles.get(file).toString());
+				} else {
+					getResponse().status = 404;
+					getResponse().message = "File not found";
+					getResponse().setContent("text/plain", "Could not locate requested file.\n");
+				}
+			} else if (file.equalsIgnoreCase("mod.artifacts.deps")) {
 				if (mod.artifacts.size() != 0 || mod.repositories.size() != 0) {
 					getResponse().setContent("text/ccfg", mod.toDepsFile());
 				} else {
 					getResponse().status = 404;
 					getResponse().message = "File not found";
 					getResponse().setContent("text/plain", "Could not locate requested file.\n");
-					return;
 				}
 			} else if (file.equalsIgnoreCase("mod.artifacts.deps.sha256")) {
 				String shafile = sha256HEX(mod.toDepsFile().getBytes()) + "  "
 						+ file.substring(0, file.lastIndexOf("."));
 				getResponse().setContent("text/plain", shafile + "\n");
+			} else if (file.equalsIgnoreCase("mod.channels.ccfg")) {
+				if (mod.channels.size() != 0) {
+					getResponse().setContent("text/ccfg", mod.toChannelFile());
+				} else {
+					getResponse().status = 404;
+					getResponse().message = "File not found";
+					getResponse().setContent("text/plain", "Could not locate requested file.\n");
+				}
 			} else {
 				if (file.endsWith(".sha256")) {
 					String name = file.substring(0, file.lastIndexOf("."));
@@ -88,10 +112,17 @@ public class Download extends WebCommand {
 						name = name.substring(0, name.indexOf("-"));
 					}
 
-					String shafile = mod.trustContainers.get(name).hashes.get(version) + "  "
-							+ file.substring(0, file.lastIndexOf("."));
-					getResponse().setContent("text/plain", shafile + "\n");
-					return;
+					if (mod.trustContainers.containsKey(name)) {
+						String shafile = mod.trustContainers.get(name).hashes.get(version) + "  "
+								+ file.substring(0, file.lastIndexOf("."));
+						getResponse().setContent("text/plain", shafile + "\n");
+						return;
+					} else {
+						getResponse().status = 404;
+						getResponse().message = "File not found";
+						getResponse().setContent("text/plain", "Could not locate requested file.\n");
+						return;
+					}
 				}
 				File trustFile = new File(trustDir, file);
 				if (!trustFile.exists()) {
