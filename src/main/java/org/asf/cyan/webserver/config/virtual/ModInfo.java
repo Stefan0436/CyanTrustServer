@@ -42,6 +42,7 @@ public class ModInfo extends Configuration<ModInfo> {
 			DepConfig conf = new DepConfig();
 			conf.repositories.putAll(repositories);
 			conf.artifacts.putAll(artifacts);
+			conf.dependencyVersion = dependencyVersion;
 			Files.writeString(new File(modDir, "artifacts.ccfg").toPath(), conf.toString());
 		}
 		
