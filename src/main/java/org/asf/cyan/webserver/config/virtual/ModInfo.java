@@ -52,8 +52,8 @@ public class ModInfo extends Configuration<ModInfo> {
 
 		if (channelFiles.size() != 0 || channels.size() != 0) {
 			ModUpdateChannelConfig updateInfo = new ModUpdateChannelConfig();
-			updateInfo.channelFiles.putAll(channelFiles);
-			updateInfo.channels.putAll(channels);
+			updateInfo.channelFiles = channelFiles;
+			updateInfo.channels = channels;
 			Files.writeString(new File(modDir, "updateinfo.ccfg").toPath(), updateInfo.toString());
 		}
 	}
