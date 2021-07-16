@@ -22,6 +22,8 @@ public class SetDepsCommandConfig extends Configuration<SetDepsCommandConfig> {
 		return null;
 	}
 
+	public String dependencyVersion = null;
+	
 	public String group = null;
 	public String modid = null;
 

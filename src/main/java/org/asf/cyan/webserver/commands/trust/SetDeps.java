@@ -49,6 +49,7 @@ public class SetDeps extends WebCommand {
 				info.artifacts.putAll(ccfg.artifacts);
 			if (ccfg.repositories != null)
 				info.repositories.putAll(ccfg.repositories);
+			info.dependencyVersion = ccfg.dependencyVersion;
 			info.save();
 		} catch (IOException e) {
 			getResponse().status = 503;

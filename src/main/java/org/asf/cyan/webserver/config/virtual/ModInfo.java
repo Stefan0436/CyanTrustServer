@@ -79,6 +79,7 @@ public class ModInfo extends Configuration<ModInfo> {
 		public HashMap<String, TrustContainer> trustContainers = new HashMap<String, TrustContainer>();
 	}
 
+	@SuppressWarnings("unused")
 	private class DepConfig extends Configuration<ContainerConfig> {
 		@Override
 		public String filename() {
@@ -89,12 +90,16 @@ public class ModInfo extends Configuration<ModInfo> {
 		public String folder() {
 			return null;
 		}
+		
+		public String dependencyVersion = null;
 
 		public HashMap<String, String> repositories = new HashMap<String, String> ();
 		public HashMap<String, HashMap<String, String>> artifacts = new HashMap<String, HashMap<String, String>>();
 	}
 
 	public String trustServer = null;
+	public String dependencyVersion = null;
+
 	public HashMap<String, String> repositories = new HashMap<String, String> ();
 	public HashMap<String, HashMap<String, String>> artifacts = new HashMap<String, HashMap<String, String>>(); 
 	public HashMap<String, TrustContainer> trustContainers = new HashMap<String, TrustContainer>();
@@ -103,6 +108,7 @@ public class ModInfo extends Configuration<ModInfo> {
 		DepConfig conf = new DepConfig();
 		conf.repositories.putAll(repositories);
 		conf.artifacts.putAll(artifacts);
+		conf.dependencyVersion = dependencyVersion;
 		return conf.toString();
 	}
 
