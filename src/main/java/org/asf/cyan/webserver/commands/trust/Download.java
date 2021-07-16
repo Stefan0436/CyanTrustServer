@@ -3,6 +3,8 @@ package org.asf.cyan.webserver.commands.trust;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 
 import org.asf.cyan.CyanTrustServerModule;
 import org.asf.cyan.WebCommand;
@@ -69,6 +71,10 @@ public class Download extends WebCommand {
 					getResponse().setContent("text/plain", "Could not locate requested file.\n");
 					return;
 				}
+			} else if (file.equalsIgnoreCase("mod.artifacts.deps.sha256")) {
+				String shafile = sha256HEX(mod.toDepsFile().getBytes()) + "  "
+						+ file.substring(0, file.lastIndexOf("."));
+				getResponse().setContent("text/plain", shafile + "\n");
 			} else {
 				if (file.endsWith(".sha256")) {
 					String name = file.substring(0, file.lastIndexOf("."));
@@ -108,6 +114,21 @@ public class Download extends WebCommand {
 			getResponse().setContent("text/plain", "Could not locate requested file.\n");
 			return;
 		}
+	}
+
+	private String sha256HEX(byte[] array) {
+		MessageDigest digest;
+		try {
+			digest = MessageDigest.getInstance("SHA-256");
+		} catch (NoSuchAlgorithmException e) {
+			return null;
+		}
+		byte[] sha = digest.digest(array);
+		StringBuilder result = new StringBuilder();
+		for (byte aByte : sha) {
+			result.append(String.format("%02x", aByte));
+		}
+		return result.toString();
 	}
 
 	@Override
